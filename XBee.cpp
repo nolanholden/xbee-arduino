@@ -31,7 +31,7 @@ XBeeResponse::XBeeResponse() {
 
 }
 
-uint8_t XBeeResponse::getApiId() {
+uint8_t XBeeResponse::getApiId() const {
 	return _apiId;
 }
 
@@ -39,7 +39,7 @@ void XBeeResponse::setApiId(uint8_t apiId) {
 	_apiId = apiId;
 }
 
-uint8_t XBeeResponse::getMsbLength() {
+uint8_t XBeeResponse::getMsbLength() const {
 	return _msbLength;
 }
 
@@ -47,7 +47,7 @@ void XBeeResponse::setMsbLength(uint8_t msbLength) {
 	_msbLength = msbLength;
 }
 
-uint8_t XBeeResponse::getLsbLength() {
+uint8_t XBeeResponse::getLsbLength() const {
 	return _lsbLength;
 }
 
@@ -55,7 +55,7 @@ void XBeeResponse::setLsbLength(uint8_t lsbLength) {
 	_lsbLength = lsbLength;
 }
 
-uint8_t XBeeResponse::getChecksum() {
+uint8_t XBeeResponse::getChecksum() const {
 	return _checksum;
 }
 
@@ -63,7 +63,7 @@ void XBeeResponse::setChecksum(uint8_t checksum) {
 	_checksum = checksum;
 }
 
-uint8_t XBeeResponse::getFrameDataLength() {
+uint8_t XBeeResponse::getFrameDataLength() const {
 	return _frameLength;
 }
 
@@ -71,7 +71,7 @@ void XBeeResponse::setFrameLength(uint8_t frameLength) {
 	_frameLength = frameLength;
 }
 
-bool XBeeResponse::isAvailable() {
+bool XBeeResponse::isAvailable() const {
 	return _complete;
 }
 
@@ -79,11 +79,11 @@ void XBeeResponse::setAvailable(bool complete) {
 	_complete = complete;
 }
 
-bool XBeeResponse::isError() {
+bool XBeeResponse::isError() const {
 	return _errorCode > 0;
 }
 
-uint8_t XBeeResponse::getErrorCode() {
+uint8_t XBeeResponse::getErrorCode() const {
 	return _errorCode;
 }
 
@@ -92,7 +92,7 @@ void XBeeResponse::setErrorCode(uint8_t errorCode) {
 }
 
 // copy common fields from xbee response to target response
-void XBeeResponse::setCommon(XBeeResponse &target) {
+void XBeeResponse::setCommon(XBeeResponse &target) const {
 	target.setApiId(getApiId());
 	target.setAvailable(isAvailable());
 	target.setChecksum(getChecksum());
@@ -108,27 +108,27 @@ ZBTxStatusResponse::ZBTxStatusResponse() : FrameIdResponse() {
 
 }
 
-uint16_t ZBTxStatusResponse::getRemoteAddress() {
+uint16_t ZBTxStatusResponse::getRemoteAddress() const {
 	return  (getFrameData()[1] << 8) + getFrameData()[2];
 }
 
-uint8_t ZBTxStatusResponse::getTxRetryCount() {
+uint8_t ZBTxStatusResponse::getTxRetryCount() const {
 	return getFrameData()[3];
 }
 
-uint8_t ZBTxStatusResponse::getDeliveryStatus() {
+uint8_t ZBTxStatusResponse::getDeliveryStatus() const {
 	return getFrameData()[4];
 }
 
-uint8_t ZBTxStatusResponse::getDiscoveryStatus() {
+uint8_t ZBTxStatusResponse::getDiscoveryStatus() const {
 	return getFrameData()[5];
 }
 
-bool ZBTxStatusResponse::isSuccess() {
+bool ZBTxStatusResponse::isSuccess() const {
 	return getDeliveryStatus() == SUCCESS;
 }
 
-void XBeeResponse::getZBTxStatusResponse(XBeeResponse &zbXBeeResponse) {
+void XBeeResponse::getZBTxStatusResponse(XBeeResponse &zbXBeeResponse) const {
 
 	// way off?
 	ZBTxStatusResponse* zb = static_cast<ZBTxStatusResponse*>(&zbXBeeResponse);
@@ -141,28 +141,28 @@ ZBRxResponse::ZBRxResponse(): RxDataResponse() {
 	_remoteAddress64 = XBeeAddress64();
 }
 
-uint16_t ZBRxResponse::getRemoteAddress16() {
+uint16_t ZBRxResponse::getRemoteAddress16() const {
 	return 	(getFrameData()[8] << 8) + getFrameData()[9];
 }
 
-uint8_t ZBRxResponse::getOption() {
+uint8_t ZBRxResponse::getOption() const {
 	return getFrameData()[10];
 }
 
 // markers to read data from packet array.  this is the index, so the 12th item in the array
-uint8_t ZBRxResponse::getDataOffset() {
+uint8_t ZBRxResponse::getDataOffset() const {
 	return 11;
 }
 
-uint8_t ZBRxResponse::getDataLength() {
+uint8_t ZBRxResponse::getDataLength() const {
 	return getPacketLength() - getDataOffset() - 1;
 }
 
-XBeeAddress64& ZBRxResponse::getRemoteAddress64() {
+const XBeeAddress64& ZBRxResponse::getRemoteAddress64() const {
 	return _remoteAddress64;
 }
 
-void XBeeResponse::getZBRxResponse(XBeeResponse &rxResponse) {
+void XBeeResponse::getZBRxResponse(XBeeResponse &rxResponse) const {
 
 	ZBRxResponse* zb = static_cast<ZBRxResponse*>(&rxResponse);
 
@@ -179,36 +179,36 @@ void XBeeResponse::getZBRxResponse(XBeeResponse &rxResponse) {
 ZBExplicitRxResponse::ZBExplicitRxResponse(): ZBRxResponse() {
 }
 
-uint8_t ZBExplicitRxResponse::getSrcEndpoint() {
+uint8_t ZBExplicitRxResponse::getSrcEndpoint() const {
 	return getFrameData()[10];
 }
 
-uint8_t ZBExplicitRxResponse::getDstEndpoint() {
+uint8_t ZBExplicitRxResponse::getDstEndpoint() const {
 	return getFrameData()[11];
 }
 
-uint16_t ZBExplicitRxResponse::getClusterId() {
+uint16_t ZBExplicitRxResponse::getClusterId() const {
 	return (uint16_t)(getFrameData()[12]) << 8 | getFrameData()[13];
 }
 
-uint16_t ZBExplicitRxResponse::getProfileId() {
+uint16_t ZBExplicitRxResponse::getProfileId() const {
 	return (uint16_t)(getFrameData()[14]) << 8 | getFrameData()[15];
 }
 
-uint8_t ZBExplicitRxResponse::getOption() {
+uint8_t ZBExplicitRxResponse::getOption() const {
 	return getFrameData()[16];
 }
 
 // markers to read data from packet array.
-uint8_t ZBExplicitRxResponse::getDataOffset() {
+uint8_t ZBExplicitRxResponse::getDataOffset() const {
 	return 17;
 }
 
-uint8_t ZBExplicitRxResponse::getDataLength() {
+uint8_t ZBExplicitRxResponse::getDataLength() const {
 	return getPacketLength() - getDataOffset() - 1;
 }
 
-void XBeeResponse::getZBExplicitRxResponse(XBeeResponse &rxResponse) {
+void XBeeResponse::getZBExplicitRxResponse(XBeeResponse &rxResponse) const {
 	// Nothing to add to that
 	getZBRxResponse(rxResponse);
 }
@@ -219,31 +219,31 @@ ZBRxIoSampleResponse::ZBRxIoSampleResponse() : ZBRxResponse() {
 }
 
 // 64 + 16 addresses, sample size, option = 12 (index 11), so this starts at 12
-uint8_t ZBRxIoSampleResponse::getDigitalMaskMsb() {
+uint8_t ZBRxIoSampleResponse::getDigitalMaskMsb() const {
 	return getFrameData()[12] & 0x1c;
 }
 
-uint8_t ZBRxIoSampleResponse::getDigitalMaskLsb() {
+uint8_t ZBRxIoSampleResponse::getDigitalMaskLsb() const {
 	return getFrameData()[13];
 }
 
-uint8_t ZBRxIoSampleResponse::getAnalogMask() {
+uint8_t ZBRxIoSampleResponse::getAnalogMask() const {
 	return getFrameData()[14] & 0x8f;
 }
 
-bool ZBRxIoSampleResponse::containsAnalog() {
+bool ZBRxIoSampleResponse::containsAnalog() const {
 	return getAnalogMask() > 0;
 }
 
-bool ZBRxIoSampleResponse::containsDigital() {
+bool ZBRxIoSampleResponse::containsDigital() const {
 	return getDigitalMaskMsb() > 0 || getDigitalMaskLsb() > 0;
 }
 
-bool ZBRxIoSampleResponse::isAnalogEnabled(uint8_t pin) {
+bool ZBRxIoSampleResponse::isAnalogEnabled(uint8_t pin) const {
 	return ((getAnalogMask() >> pin) & 1) == 1;
 }
 
-bool ZBRxIoSampleResponse::isDigitalEnabled(uint8_t pin) {
+bool ZBRxIoSampleResponse::isDigitalEnabled(uint8_t pin) const {
 	if (pin <= 7) {
 		// added extra parens to calm avr compiler
 		return ((getDigitalMaskLsb() >> pin) & 1) == 1;
@@ -252,7 +252,7 @@ bool ZBRxIoSampleResponse::isDigitalEnabled(uint8_t pin) {
 	}
 }
 
-uint16_t ZBRxIoSampleResponse::getAnalog(uint8_t pin) {
+uint16_t ZBRxIoSampleResponse::getAnalog(uint8_t pin) const {
 	// analog starts 13 bytes after sample size, if no dio enabled
 	uint8_t start = 15;
 
@@ -261,6 +261,8 @@ uint16_t ZBRxIoSampleResponse::getAnalog(uint8_t pin) {
 		start+=2;
 	}
 
+//	std::cout << "spacing is " << static_cast<unsigned int>(spacing) << std::endl;
+
 	// start depends on how many pins before this pin are enabled
 	for (int i = 0; i < pin; i++) {
 		if (isAnalogEnabled(i)) {
@@ -268,10 +270,14 @@ uint16_t ZBRxIoSampleResponse::getAnalog(uint8_t pin) {
 		}
 	}
 
+//	std::cout << "start for analog pin ["<< static_cast<unsigned int>(pin) << "]/sample " << static_cast<unsigned int>(sample) << " is " << static_cast<unsigned int>(start) << std::endl;
+
+//	std::cout << "returning index " << static_cast<unsigned int>(getSampleOffset() + start) << " and index " <<  static_cast<unsigned int>(getSampleOffset() + start + 1) << ", val is " << static_cast<unsigned int>(getFrameData()[getSampleOffset() + start] << 8) <<  " and " <<  + static_cast<unsigned int>(getFrameData()[getSampleOffset() + start + 1]) << std::endl;
+
 	return (uint16_t)((getFrameData()[start] << 8) + getFrameData()[start + 1]);
 }
 
-bool ZBRxIoSampleResponse::isDigitalOn(uint8_t pin) {
+bool ZBRxIoSampleResponse::isDigitalOn(uint8_t pin) const {
 	if (pin <= 7) {
 		// D0-7
 		// DIO LSB is index 5
@@ -283,7 +289,7 @@ bool ZBRxIoSampleResponse::isDigitalOn(uint8_t pin) {
 	}
 }
 
-void XBeeResponse::getZBRxIoSampleResponse(XBeeResponse &response) {
+void XBeeResponse::getZBRxIoSampleResponse(XBeeResponse &response) const {
 	ZBRxIoSampleResponse* zb = static_cast<ZBRxIoSampleResponse*>(&response);
 
 
@@ -303,11 +309,11 @@ RxResponse::RxResponse() : RxDataResponse() {
 
 }
 
-uint16_t Rx16Response::getRemoteAddress16() {
+uint16_t Rx16Response::getRemoteAddress16() const {
 	return (getFrameData()[0] << 8) + getFrameData()[1];
 }
 
-XBeeAddress64& Rx64Response::getRemoteAddress64() {
+const XBeeAddress64& Rx64Response::getRemoteAddress64() const {
 	return _remoteAddress;
 }
 
@@ -323,21 +329,21 @@ RxIoSampleBaseResponse::RxIoSampleBaseResponse() : RxResponse() {
 
 }
 
-uint8_t RxIoSampleBaseResponse::getSampleOffset() {
+uint8_t RxIoSampleBaseResponse::getSampleOffset() const {
 	// sample starts 2 bytes after rssi
 	return getRssiOffset() + 2;
 }
 
 
-uint8_t RxIoSampleBaseResponse::getSampleSize() {
+uint8_t RxIoSampleBaseResponse::getSampleSize() const {
 	return getFrameData()[getSampleOffset()];
 }
 
-bool RxIoSampleBaseResponse::containsAnalog() {
+bool RxIoSampleBaseResponse::containsAnalog() const {
 	return (getFrameData()[getSampleOffset() + 1] & 0x7e) > 0;
 }
 
-bool RxIoSampleBaseResponse::containsDigital() {
+bool RxIoSampleBaseResponse::containsDigital() const {
 	return (getFrameData()[getSampleOffset() + 1] & 0x1) > 0 || getFrameData()[getSampleOffset() + 2] > 0;
 }
 
@@ -345,11 +351,11 @@ bool RxIoSampleBaseResponse::containsDigital() {
 //	return getAnalog(0, sample);
 //}
 
-bool RxIoSampleBaseResponse::isAnalogEnabled(uint8_t pin) {
+bool RxIoSampleBaseResponse::isAnalogEnabled(uint8_t pin) const {
 	return (((getFrameData()[getSampleOffset() + 1] >> (pin + 1)) & 1) == 1);
 }
 
-bool RxIoSampleBaseResponse::isDigitalEnabled(uint8_t pin) {
+bool RxIoSampleBaseResponse::isDigitalEnabled(uint8_t pin) const {
 	if (pin < 8) {
 		return ((getFrameData()[getSampleOffset() + 2] >> pin) & 1) == 1;
 	} else {
@@ -368,12 +374,12 @@ bool RxIoSampleBaseResponse::isDigitalEnabled(uint8_t pin) {
 //				width+=2;
 //			}
 //		}
-//
+//		
 //		if (this.containsDigital()) {
 //			// digital enabled takes two bytes, no matter how many pins enabled
 //			width+= 2;
 //		}
-//
+//		
 //		return width;
 //	}
 //
@@ -388,29 +394,29 @@ bool RxIoSampleBaseResponse::isDigitalEnabled(uint8_t pin) {
 //			// 64 bit
 //			startIndex = 13;
 //		}
-//
+//		
 //		return startIndex;
 //	}
-//
+//	
 //	public int getDigitalMsb(int sample) {
 //		// msb digital always starts 3 bytes after sample size
 //		return this.getProcessedPacketBytes()[this.getStartIndex() + 3 + this.getSampleWidth() * sample];
 //	}
-//
+//	
 //	public int getDigitalLsb(int sample) {
 //		return this.getProcessedPacketBytes()[this.getStartIndex() + 3 + this.getSampleWidth() * sample + 1];
-//	}
+//	}	
 //
 //	public Boolean isDigitalOn(int pin, int sample) {
-//
+//		
 //		if (sample < 0 || sample >= this.getSampleSize()) {
 //			throw new IllegalArgumentException("invalid sample size: " + sample);
 //		}
-//
+//		
 //		if (!this.containsDigital()) {
 //			throw new RuntimeException("Digital is not enabled");
 //		}
-//
+//		
 //		if (pin >= 0 && pin < 8) {
 //			return ((this.getDigitalLsb(sample) >> pin) & 1) == 1;
 //		} else if (pin == 8) {
@@ -418,23 +424,23 @@ bool RxIoSampleBaseResponse::isDigitalEnabled(uint8_t pin) {
 //			return (this.getDigitalMsb(sample) & 1) == 1;
 //		} else {
 //			throw new IllegalArgumentException("Invalid pin: " + pin);
-//		}
+//		}		
 //	}
-//
+//	
 //	public Integer getAnalog(int pin, int sample) {
-//
+//		
 //		if (sample < 0 || sample >= this.getSampleSize()) {
 //			throw new IllegalArgumentException("invalid sample size: " + sample);
 //		}
-//
+//		
 //		// analog starts 3 bytes after start of sample, if no dio enabled
 //		int startIndex = this.getStartIndex() + 3;
-//
+//		
 //		if (this.containsDigital()) {
 //			// make room for digital i/o sample (2 bytes per sample)
 //			startIndex+= 2;
 //		}
-//
+//		
 //		startIndex+= this.getSampleWidth() * sample;
 //
 //		// start depends on how many pins before this pin are enabled
@@ -445,10 +451,10 @@ bool RxIoSampleBaseResponse::isDigitalEnabled(uint8_t pin) {
 //			}
 //		}
 //
-//		return (this.getProcessedPacketBytes()[startIndex] << 8) + this.getProcessedPacketBytes()[startIndex + 1];
+//		return (this.getProcessedPacketBytes()[startIndex] << 8) + this.getProcessedPacketBytes()[startIndex + 1];		
 //	}
-
-uint8_t RxIoSampleBaseResponse::getSampleStart(uint8_t sample) {
+				
+uint8_t RxIoSampleBaseResponse::getSampleStart(uint8_t sample) const {
 	uint8_t spacing = 0;
 
 	if (containsDigital()) {
@@ -469,7 +475,7 @@ uint8_t RxIoSampleBaseResponse::getSampleStart(uint8_t sample) {
 	return getSampleOffset() + 3 + sample * spacing;
 }
 
-uint16_t RxIoSampleBaseResponse::getAnalog(uint8_t pin, uint8_t sample) {
+uint16_t RxIoSampleBaseResponse::getAnalog(uint8_t pin, uint8_t sample) const {
 	uint8_t start = getSampleStart(sample);
 
 	if (containsDigital()) {
@@ -487,7 +493,7 @@ uint16_t RxIoSampleBaseResponse::getAnalog(uint8_t pin, uint8_t sample) {
 	return (uint16_t)((getFrameData()[start] << 8) + getFrameData()[start + 1]);
 }
 
-bool RxIoSampleBaseResponse::isDigitalOn(uint8_t pin, uint8_t sample) {
+bool RxIoSampleBaseResponse::isDigitalOn(uint8_t pin, uint8_t sample) const {
 	if (pin < 8) {
 		return ((getFrameData()[getSampleStart(sample) + 1] >> pin) & 1) == 1;
 	} else {
@@ -504,15 +510,15 @@ Rx16IoSampleResponse::Rx16IoSampleResponse() : RxIoSampleBaseResponse() {
 
 }
 
-uint16_t Rx16IoSampleResponse::getRemoteAddress16() {
+uint16_t Rx16IoSampleResponse::getRemoteAddress16() const {
 	return (uint16_t)((getFrameData()[0] << 8) + getFrameData()[1]);
 }
 
-uint8_t Rx16IoSampleResponse::getRssiOffset() {
+uint8_t Rx16IoSampleResponse::getRssiOffset() const {
 	return 2;
 }
 
-void XBeeResponse::getRx16IoSampleResponse(XBeeResponse &response) {
+void XBeeResponse::getRx16IoSampleResponse(XBeeResponse &response) const {
 	Rx16IoSampleResponse* rx = static_cast<Rx16IoSampleResponse*>(&response);
 
 	rx->setFrameData(getFrameData());
@@ -524,15 +530,15 @@ Rx64IoSampleResponse::Rx64IoSampleResponse() : RxIoSampleBaseResponse() {
 	_remoteAddress = XBeeAddress64();
 }
 
-XBeeAddress64& Rx64IoSampleResponse::getRemoteAddress64() {
+const XBeeAddress64& Rx64IoSampleResponse::getRemoteAddress64() const {
 	return _remoteAddress;
 }
 
-uint8_t Rx64IoSampleResponse::getRssiOffset() {
+uint8_t Rx64IoSampleResponse::getRssiOffset() const {
 	return 8;
 }
 
-void XBeeResponse::getRx64IoSampleResponse(XBeeResponse &response) {
+void XBeeResponse::getRx64IoSampleResponse(XBeeResponse &response) const {
 	Rx64IoSampleResponse* rx = static_cast<Rx64IoSampleResponse*>(&response);
 
 	rx->setFrameData(getFrameData());
@@ -546,15 +552,15 @@ TxStatusResponse::TxStatusResponse() : FrameIdResponse() {
 
 }
 
-uint8_t TxStatusResponse::getStatus() {
+uint8_t TxStatusResponse::getStatus() const {
 	return getFrameData()[1];
 }
 
-bool TxStatusResponse::isSuccess() {
+bool TxStatusResponse::isSuccess() const {
 	return getStatus() == SUCCESS;
 }
 
-void XBeeResponse::getTxStatusResponse(XBeeResponse &txResponse) {
+void XBeeResponse::getTxStatusResponse(XBeeResponse &txResponse) const {
 
 	TxStatusResponse* txStatus = static_cast<TxStatusResponse*>(&txResponse);
 
@@ -563,48 +569,50 @@ void XBeeResponse::getTxStatusResponse(XBeeResponse &txResponse) {
 	setCommon(txResponse);
 }
 
-uint8_t RxResponse::getRssi() {
+uint8_t RxResponse::getRssi() const {
 	return getFrameData()[getRssiOffset()];
 }
 
-uint8_t RxResponse::getOption() {
+uint8_t RxResponse::getOption() const {
 	return getFrameData()[getRssiOffset() + 1];
 }
 
-bool RxResponse::isAddressBroadcast() {
+bool RxResponse::isAddressBroadcast() const {
 	return (getOption() & 2) == 2;
 }
 
-bool RxResponse::isPanBroadcast() {
+bool RxResponse::isPanBroadcast() const {
 	return (getOption() & 4) == 4;
 }
 
-uint8_t RxResponse::getDataLength() {
+uint8_t RxResponse::getDataLength() const {
 	return getPacketLength() - getDataOffset() - 1;
 }
 
-uint8_t RxResponse::getDataOffset() {
+uint8_t RxResponse::getDataOffset() const {
 	return getRssiOffset() + 2;
 }
 
-uint8_t Rx16Response::getRssiOffset() {
+uint8_t Rx16Response::getRssiOffset() const {
 	return RX_16_RSSI_OFFSET;
 }
 
-void XBeeResponse::getRx16Response(XBeeResponse &rx16Response) {
+void XBeeResponse::getRx16Response(XBeeResponse &rx16Response) const {
 
 	Rx16Response* rx16 = static_cast<Rx16Response*>(&rx16Response);
 
 	// pass pointer array to subclass
 	rx16->setFrameData(getFrameData());
 	setCommon(rx16Response);
+
+//	rx16->getRemoteAddress16().setAddress((getFrameData()[0] << 8) + getFrameData()[1]);
 }
 
-uint8_t Rx64Response::getRssiOffset() {
+uint8_t Rx64Response::getRssiOffset() const {
 	return RX_64_RSSI_OFFSET;
 }
 
-void XBeeResponse::getRx64Response(XBeeResponse &rx64Response) {
+void XBeeResponse::getRx64Response(XBeeResponse &rx64Response) const {
 
 	Rx64Response* rx64 = static_cast<Rx64Response*>(&rx64Response);
 
@@ -622,24 +630,24 @@ RemoteAtCommandResponse::RemoteAtCommandResponse() : AtCommandResponse() {
 
 }
 
-uint8_t* RemoteAtCommandResponse::getCommand() {
+uint8_t* RemoteAtCommandResponse::getCommand() const {
 	return getFrameData() + 11;
 }
 
-uint8_t RemoteAtCommandResponse::getStatus() {
+uint8_t RemoteAtCommandResponse::getStatus() const {
 	return getFrameData()[13];
 }
 
-bool RemoteAtCommandResponse::isOk() {
+bool RemoteAtCommandResponse::isOk() const {
 	// weird c++ behavior.  w/o this method, it calls AtCommandResponse::isOk(), which calls the AtCommandResponse::getStatus, not this.getStatus!!!
 	return getStatus() == AT_OK;
 }
 
-uint8_t RemoteAtCommandResponse::getValueLength() {
+uint8_t RemoteAtCommandResponse::getValueLength() const {
 	return getFrameDataLength() - 14;
 }
 
-uint8_t* RemoteAtCommandResponse::getValue() {
+uint8_t* RemoteAtCommandResponse::getValue() const {
 	if (getValueLength() > 0) {
 		// value is only included for query commands.  set commands does not return a value
 		return getFrameData() + 14;
@@ -648,15 +656,15 @@ uint8_t* RemoteAtCommandResponse::getValue() {
 	return NULL;
 }
 
-uint16_t RemoteAtCommandResponse::getRemoteAddress16() {
+uint16_t RemoteAtCommandResponse::getRemoteAddress16() const {
 	return uint16_t((getFrameData()[9] << 8) + getFrameData()[10]);
 }
 
-XBeeAddress64& RemoteAtCommandResponse::getRemoteAddress64() {
+const XBeeAddress64& RemoteAtCommandResponse::getRemoteAddress64() const {
 	return _remoteAddress64;
 }
 
-void XBeeResponse::getRemoteAtCommandResponse(XBeeResponse &response) {
+void XBeeResponse::getRemoteAtCommandResponse(XBeeResponse &response) const {
 
 	// TODO no real need to cast.  change arg to match expected class
 	RemoteAtCommandResponse* at = static_cast<RemoteAtCommandResponse*>(&response);
@@ -674,11 +682,11 @@ RxDataResponse::RxDataResponse() : XBeeResponse() {
 
 }
 
-uint8_t RxDataResponse::getData(int index) {
+uint8_t RxDataResponse::getData(int index) const {
 	return getFrameData()[getDataOffset() + index];
 }
 
-uint8_t* RxDataResponse::getData() {
+uint8_t* RxDataResponse::getData() const {
 	return getFrameData() + getDataOffset();
 }
 
@@ -686,7 +694,7 @@ FrameIdResponse::FrameIdResponse() {
 
 }
 
-uint8_t FrameIdResponse::getFrameId() {
+uint8_t FrameIdResponse::getFrameId() const {
 	return getFrameData()[0];
 }
 
@@ -695,11 +703,11 @@ ModemStatusResponse::ModemStatusResponse() {
 
 }
 
-uint8_t ModemStatusResponse::getStatus() {
+uint8_t ModemStatusResponse::getStatus() const {
 	return getFrameData()[0];
 }
 
-void XBeeResponse::getModemStatusResponse(XBeeResponse &modemStatusResponse) {
+void XBeeResponse::getModemStatusResponse(XBeeResponse &modemStatusResponse) const {
 
 	ModemStatusResponse* modem = static_cast<ModemStatusResponse*>(&modemStatusResponse);
 
@@ -713,19 +721,19 @@ AtCommandResponse::AtCommandResponse() {
 
 }
 
-uint8_t* AtCommandResponse::getCommand() {
+uint8_t* AtCommandResponse::getCommand() const {
 	return getFrameData() + 1;
 }
 
-uint8_t AtCommandResponse::getStatus() {
+uint8_t AtCommandResponse::getStatus() const {
 	return getFrameData()[3];
 }
 
-uint8_t AtCommandResponse::getValueLength() {
+uint8_t AtCommandResponse::getValueLength() const {
 	return getFrameDataLength() - 4;
 }
 
-uint8_t* AtCommandResponse::getValue() {
+uint8_t* AtCommandResponse::getValue() const {
 	if (getValueLength() > 0) {
 		// value is only included for query commands.  set commands does not return a value
 		return getFrameData() + 4;
@@ -734,11 +742,11 @@ uint8_t* AtCommandResponse::getValue() {
 	return NULL;
 }
 
-bool AtCommandResponse::isOk() {
+bool AtCommandResponse::isOk() const {
 	return getStatus() == AT_OK;
 }
 
-void XBeeResponse::getAtCommandResponse(XBeeResponse &atCommandResponse) {
+void XBeeResponse::getAtCommandResponse(XBeeResponse &atCommandResponse) const {
 
 	AtCommandResponse* at = static_cast<AtCommandResponse*>(&atCommandResponse);
 
@@ -747,11 +755,11 @@ void XBeeResponse::getAtCommandResponse(XBeeResponse &atCommandResponse) {
 	setCommon(atCommandResponse);
 }
 
-uint16_t XBeeResponse::getPacketLength() {
+uint16_t XBeeResponse::getPacketLength() const {
 	return ((_msbLength << 8) & 0xff) + (_lsbLength & 0xff);
 }
 
-uint8_t* XBeeResponse::getFrameData() {
+uint8_t* XBeeResponse::getFrameData() const {
 	return _frameDataPtr;
 }
 
@@ -792,14 +800,14 @@ XBee::XBee(): _response(XBeeResponse()) {
         _response.init();
         _response.setFrameData(_responseFrameData);
 		// Contributed by Paul Stoffregen for Teensy support
-#if defined(__AVR_ATmega32U4__) || (defined(TEENSYDUINO) && (defined(KINETISK) || defined(KINETISL)))
+#if defined(__AVR_ATmega32U4__) || defined(__MK20DX128__)
         _serial = &Serial1;
 #else
         _serial = &Serial;
 #endif
 }
 
-uint8_t XBee::getNextFrameId() {
+uint8_t XBee::getNextFrameId() const {
 
 	_nextFrameId++;
 
@@ -820,24 +828,32 @@ void XBee::setSerial(Stream &serial) {
 	_serial = &serial;
 }
 
-bool XBee::available() {
+bool XBee::available() const {
 	return _serial->available();
 }
 
 uint8_t XBee::read() {
 	return _serial->read();
-}
+} 
 
-void XBee::write(uint8_t val) {
+void XBee::flush() const {
+	_serial->flush();
+} 
+
+void XBee::write(uint8_t val) const {
 	_serial->write(val);
 }
 
-XBeeResponse& XBee::getResponse() {
+const XBeeResponse& XBee::getResponse() const {
 	return _response;
 }
 
+XBeeResponse& XBee::getResponse() {
+  return _response;
+}
+
 // TODO how to convert response to proper subclass?
-void XBee::getResponse(XBeeResponse &response) {
+void XBee::getResponse(XBeeResponse &response) const {
 
 	response.setMsbLength(_response.getMsbLength());
 	response.setLsbLength(_response.getLsbLength());
@@ -953,6 +969,8 @@ void XBee::readPacket() {
 				if (_pos == (_response.getPacketLength() + 3)) {
 					// verify checksum
 
+					//std::cout << "read checksum " << static_cast<unsigned int>(b) << " at pos " << static_cast<unsigned int>(_pos) << std::endl;
+
 					if ((_checksumTotal & 0xff) == 0xff) {
 						_response.setChecksum(b);
 						_response.setAvailable(true);
@@ -991,11 +1009,11 @@ void XBeeRequest::setFrameId(uint8_t frameId) {
 	_frameId = frameId;
 }
 
-uint8_t XBeeRequest::getFrameId() {
+uint8_t XBeeRequest::getFrameId() const {
 	return _frameId;
 }
 
-uint8_t XBeeRequest::getApiId() {
+uint8_t XBeeRequest::getApiId() const {
 	return _apiId;
 }
 
@@ -1021,7 +1039,7 @@ PayloadRequest::PayloadRequest(uint8_t apiId, uint8_t frameId, uint8_t *payload,
 	_payloadLength = payloadLength;
 }
 
-uint8_t* PayloadRequest::getPayload() {
+uint8_t* PayloadRequest::getPayload() const {
 	return _payloadPtr;
 }
 
@@ -1029,7 +1047,7 @@ void PayloadRequest::setPayload(uint8_t* payload) {
 	_payloadPtr = payload;
 }
 
-uint8_t PayloadRequest::getPayloadLength() {
+uint8_t PayloadRequest::getPayloadLength() const {
 	return _payloadLength;
 }
 
@@ -1059,7 +1077,7 @@ ZBTxRequest::ZBTxRequest(const XBeeAddress64 &addr64, uint8_t *data, uint8_t dat
 	_option = ZB_TX_UNICAST;
 }
 
-uint8_t ZBTxRequest::getFrameData(uint8_t pos) {
+uint8_t ZBTxRequest::getFrameData(uint8_t pos) const {
 	if (pos == 0) {
 		return (_addr64.getMsb() >> 24) & 0xff;
 	} else if (pos == 1) {
@@ -1089,7 +1107,7 @@ uint8_t ZBTxRequest::getFrameData(uint8_t pos) {
 	}
 }
 
-uint8_t ZBTxRequest::getFrameDataLength() {
+uint8_t ZBTxRequest::getFrameDataLength() const {
 	return ZB_TX_API_LENGTH + getPayloadLength();
 }
 
@@ -1153,7 +1171,7 @@ ZBExplicitTxRequest::ZBExplicitTxRequest(XBeeAddress64 &addr64, uint8_t *payload
 	setApiId(ZB_EXPLICIT_TX_REQUEST);
 }
 
-uint8_t ZBExplicitTxRequest::getFrameData(uint8_t pos) {
+uint8_t ZBExplicitTxRequest::getFrameData(uint8_t pos) const {
 	if (pos < 10) {
 		return ZBTxRequest::getFrameData(pos);
 	} else if (pos == 10) {
@@ -1177,7 +1195,7 @@ uint8_t ZBExplicitTxRequest::getFrameData(uint8_t pos) {
 	}
 }
 
-uint8_t ZBExplicitTxRequest::getFrameDataLength() {
+uint8_t ZBExplicitTxRequest::getFrameDataLength() const {
 	return ZB_EXPLICIT_TX_API_LENGTH + getPayloadLength();
 }
 
@@ -1230,7 +1248,7 @@ Tx16Request::Tx16Request(uint16_t addr16, uint8_t *data, uint8_t dataLength) : P
 	_option = ACK_OPTION;
 }
 
-uint8_t Tx16Request::getFrameData(uint8_t pos) {
+uint8_t Tx16Request::getFrameData(uint8_t pos) const {
 
 	if (pos == 0) {
 		return (_addr16 >> 8) & 0xff;
@@ -1243,7 +1261,7 @@ uint8_t Tx16Request::getFrameData(uint8_t pos) {
 	}
 }
 
-uint8_t Tx16Request::getFrameDataLength() {
+uint8_t Tx16Request::getFrameDataLength() const {
 	return TX_16_API_LENGTH + getPayloadLength();
 }
 
@@ -1277,7 +1295,7 @@ Tx64Request::Tx64Request(XBeeAddress64 &addr64, uint8_t *data, uint8_t dataLengt
 	_option = ACK_OPTION;
 }
 
-uint8_t Tx64Request::getFrameData(uint8_t pos) {
+uint8_t Tx64Request::getFrameData(uint8_t pos) const {
 
 	if (pos == 0) {
 		return (_addr64.getMsb() >> 24) & 0xff;
@@ -1302,7 +1320,7 @@ uint8_t Tx64Request::getFrameData(uint8_t pos) {
 	}
 }
 
-uint8_t Tx64Request::getFrameDataLength() {
+uint8_t Tx64Request::getFrameDataLength() const {
 	return TX_64_API_LENGTH + getPayloadLength();
 }
 
@@ -1340,15 +1358,15 @@ AtCommandRequest::AtCommandRequest(uint8_t *command) : XBeeRequest(AT_COMMAND_RE
 	clearCommandValue();
 }
 
-uint8_t* AtCommandRequest::getCommand() {
+uint8_t* AtCommandRequest::getCommand() const {
 	return _command;
 }
 
-uint8_t* AtCommandRequest::getCommandValue() {
+uint8_t* AtCommandRequest::getCommandValue() const {
 	return _commandValue;
 }
 
-uint8_t AtCommandRequest::getCommandValueLength() {
+uint8_t AtCommandRequest::getCommandValueLength() const {
 	return _commandValueLength;
 }
 
@@ -1364,7 +1382,7 @@ void AtCommandRequest::setCommandValueLength(uint8_t length) {
 	_commandValueLength = length;
 }
 
-uint8_t AtCommandRequest::getFrameData(uint8_t pos) {
+uint8_t AtCommandRequest::getFrameData(uint8_t pos) const {
 
 	if (pos == 0) {
 		return _command[0];
@@ -1384,7 +1402,7 @@ void AtCommandRequest::clearCommandValue() {
 //	 XBeeRequest::reset();
 //}
 
-uint8_t AtCommandRequest::getFrameDataLength() {
+uint8_t AtCommandRequest::getFrameDataLength() const {
 	// command is 2 byte + length of value
 	return AT_COMMAND_API_LENGTH + _commandValueLength;
 }
@@ -1434,7 +1452,7 @@ void RemoteAtCommandRequest::setRemoteAddress16(uint16_t remoteAddress16) {
 	_remoteAddress16 = remoteAddress16;
 }
 
-XBeeAddress64& RemoteAtCommandRequest::getRemoteAddress64() {
+const XBeeAddress64& RemoteAtCommandRequest::getRemoteAddress64() const {
 	return _remoteAddress64;
 }
 
@@ -1451,7 +1469,7 @@ void RemoteAtCommandRequest::setApplyChanges(bool applyChanges) {
 }
 
 
-uint8_t RemoteAtCommandRequest::getFrameData(uint8_t pos) {
+uint8_t RemoteAtCommandRequest::getFrameData(uint8_t pos) const {
 	if (pos == 0) {
 		return (_remoteAddress64.getMsb() >> 24) & 0xff;
 	} else if (pos == 1) {
@@ -1483,7 +1501,7 @@ uint8_t RemoteAtCommandRequest::getFrameData(uint8_t pos) {
 	}
 }
 
-uint8_t RemoteAtCommandRequest::getFrameDataLength() {
+uint8_t RemoteAtCommandRequest::getFrameDataLength() const {
 	return REMOTE_AT_COMMAND_API_LENGTH + getCommandValueLength();
 }
 
@@ -1493,7 +1511,7 @@ uint8_t RemoteAtCommandRequest::getFrameDataLength() {
 //	_frame = frame;
 //}
 
-void XBee::send(XBeeRequest &request) {
+void XBee::send(XBeeRequest &request) const {
 	// the new new deal
 
 	sendByte(START_BYTE, false);
@@ -1515,7 +1533,10 @@ void XBee::send(XBeeRequest &request) {
 	checksum+= request.getApiId();
 	checksum+= request.getFrameId();
 
+	//std::cout << "frame length is " << static_cast<unsigned int>(request.getFrameDataLength()) << std::endl;
+
 	for (int i = 0; i < request.getFrameDataLength(); i++) {
+//		std::cout << "sending byte [" << static_cast<unsigned int>(i) << "] " << std::endl;
 		sendByte(request.getFrameData(i), true);
 		checksum+= request.getFrameData(i);
 	}
@@ -1523,13 +1544,19 @@ void XBee::send(XBeeRequest &request) {
 	// perform 2s complement
 	checksum = 0xff - checksum;
 
+//	std::cout << "checksum is " << static_cast<unsigned int>(checksum) << std::endl;
+
 	// send checksum
 	sendByte(checksum, true);
+
+	// send packet (Note: prior to Arduino 1.0 this flushed the incoming buffer, which of course was not so great)
+	flush();
 }
 
-void XBee::sendByte(uint8_t b, bool escape) {
+void XBee::sendByte(uint8_t b, bool escape) const {
 
 	if (escape && (b == START_BYTE || b == ESCAPE || b == XON || b == XOFF)) {
+//		std::cout << "escaping byte [" << toHexString(b) << "] " << std::endl;
 		write(ESCAPE);
 		write(b ^ 0x20);
 	} else {
